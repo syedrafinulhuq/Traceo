@@ -1,0 +1,18 @@
+# database/docker-compose.yml
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: traceo-postgres
+    environment:
+      POSTGRES_USER: traceo
+      POSTGRES_PASSWORD: traceo123
+      POSTGRES_DB: traceo
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
