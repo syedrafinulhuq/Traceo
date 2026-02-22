@@ -1,199 +1,318 @@
-# 🧑‍💻 Traceo - Centralized Logging & Audit Backend
+# 🚀 **Traceo**
 
-> A **real-world backend system** that collects, processes, and queries logs and user activities across multiple services. Built to demonstrate **distributed backend engineering, event-driven architecture, and audit logging**.
+### Distributed Intelligent Monitoring, Analysis & Alerting Platform
 
-This project is ideal for **entry-level developers who want to show production-grade backend skills**.
-
----
-
-## 📌 Features
-
-* **Centralized log ingestion** from multiple services
-* **Asynchronous processing** using background workers
-* **Structured storage** for logs and audit events
-* **Event-driven architecture** (RabbitMQ/Kafka)
-* **Query API** with filters, pagination, and audit trails
-* **Immutable audit logs** for critical actions
-* **Dockerized services** for easy deployment
-* **Swagger documentation** for APIs
+*(Multi-language, production-grade system)*
 
 ---
 
-## 🎯 What It Does
+## 🔎 What This Project Is (Updated)
 
-1. Services generate logs (e.g., errors, actions, payments, role changes)
-2. Logs are sent to a **central ingestion API**
-3. Logs are **queued asynchronously** to workers
-4. Workers process, enrich, and store logs in the database
-5. Query API provides **searchable, filterable logs** for monitoring, debugging, or auditing
-6. Audit logs are **immutable**, ensuring compliance and security
+**Traceo** is a **full-scale distributed observability and intelligence platform** that:
+
+* Collects **low-level system telemetry** (kernel + user space)
+* Streams data **in real time**
+* Performs **intelligent analysis & anomaly detection**
+* Exposes **secure APIs and live dashboards**
+* Sends **automated alerts**
+* Runs in a **cloud-native Kubernetes environment**
+
+This project is intentionally designed to **prove mastery**, not familiarity.
 
 ---
 
-## 🧩 Folder Structure
+## 🧠 Updated High-Level Architecture
 
-```md
+```
+┌────────────────────────┐
+│   C / C++ + eBPF Agent │
+│  (Kernel + User Space) │
+└──────────┬─────────────┘
+           │ binary / protobuf
+           ▼
+┌────────────────────────┐
+│ Go Ingest & Stream Hub │
+│  - TCP / UDP           │
+│  - gRPC                │
+│  - Worker Pools        │
+└──────┬─────────┬───────┘
+       │ gRPC     │ WebSocket
+       ▼          ▼
+┌─────────────┐  ┌───────────────────┐
+│ Python AI   │  │ NestJS API Gateway │
+│ & Analysis  │  │ + Live Dashboard   │
+└──────┬──────┘  └──────────┬────────┘
+       │ alerts              │ REST / WS
+       ▼                     ▼
+┌─────────────────────────────────────┐
+│ Alerting System (Email / Webhook)   │
+└─────────────────────────────────────┘
 
-centralized-logging-backend/
-├── api-gateway/              # NestJS API Gateway
-│   ├── src/
-│   ├── Dockerfile
-│   └── README.md
-├── ingestion-service/        # Node.js/Express Log Ingestion API
-│   ├── src/
-│   ├── Dockerfile
-│   └── README.md
-├── log-worker/               # Go Worker for processing logs
-│   ├── main.go
-│   ├── Dockerfile
-│   └── README.md
-├── query-service/            # NestJS Query API
-│   ├── src/
-│   ├── Dockerfile
-│   └── README.md
-├── message-broker/           # RabbitMQ/Kafka configs
-│   └── docker-compose.yml
-├── database/                 # PostgreSQL or MongoDB configs
-│   └── docker-compose.yml
-├── docker-compose.yml        # Orchestrates all services
-├── README.md                 # This README
-└── .env.example              # Example environment variables
-
+(All services deployed on Kubernetes)
 ```
 
 ---
 
-## 🧱 Tech Stack
+## 🧩 Language & Responsibility Mapping (Updated)
 
-| Layer                     | Technology                                             |
-| ------------------------- | ------------------------------------------------------ |
-| Programming Languages     | Node.js, NestJS, Go                                    |
-| Backend Frameworks        | Express.js, NestJS, Gin (for worker optional)          |
-| Database                  | PostgreSQL (structured logs), Redis (optional caching) |
-| Message Queue             | RabbitMQ or Kafka                                      |
-| Background Processing     | Go Worker                                              |
-| Authentication & Security | JWT, Role-based access control                         |
-| API Documentation         | Swagger / OpenAPI                                      |
-| Deployment                | Docker, Docker Compose                                 |
+| Language        | Responsibility                     | Skills Proven           |
+| --------------- | ---------------------------------- | ----------------------- |
+| **C / C++**     | Telemetry agent + eBPF loader      | Systems, memory, kernel |
+| **Go**          | High-throughput ingest + streaming | Concurrency, networking |
+| **Python**      | Intelligence & anomaly detection   | Data, ML, async         |
+| **NestJS**      | API gateway + WebSocket            | Enterprise backend      |
+| **YAML / Helm** | Kubernetes deployment              | Cloud-native skills     |
 
 ---
 
-## 🛠️ Services Breakdown
-
-### 1️⃣ API Gateway (NestJS)
-
-* Entry point for clients
-* Auth validation & routing
-* Rate limiting
-* Swagger docs
-
-### 2️⃣ Log Ingestion API (Node.js/Express)
-
-* Receives logs from multiple services
-* Validates and normalizes logs
-* Pushes logs to message queue
-
-### 3️⃣ Log Processing Worker (Go)
-
-* Consumes log events from queue
-* Enriches logs (metadata, timestamps)
-* Stores structured logs in DB
-* Handles retries & failures
-
-### 4️⃣ Query API (NestJS)
-
-* Query and filter logs
-* Access control for admins vs normal users
-* Provides audit trails for critical actions
+# 🔧 Component-by-Component (UPDATED)
 
 ---
 
-## 🔁 Workflow
+## 1️⃣ **C / C++ + eBPF – Low-Level Telemetry Agent**
 
-```text
-Service (Order / Inventory / Payment)
-        │
-        ▼
-Log Ingestion API (Node.js/Express)
-        │
-        ▼
-Message Queue (RabbitMQ / Kafka)
-        │
-        ▼
-Log Processing Worker (Go)
-        │
-        ▼
-Database (PostgreSQL)
-        │
-        ▼
-Query API (NestJS)
-        │
-        ▼
-Admins / Engineers / Auditors
+### What You Build
+
+A **native monitoring agent** with **two layers**:
+
+### 🧠 User-Space (C/C++)
+
+* Collects:
+
+  * CPU
+  * Memory
+  * Disk
+  * Process stats
+* Serializes data (binary / protobuf)
+* Sends to Go ingest service
+
+### 🧬 Kernel-Space (eBPF – Linux)
+
+* Tracks:
+
+  * Syscalls
+  * Context switches
+  * Network packets
+  * File access
+* Zero user-space overhead
+* Streams events to user-space agent
+
+### Skills Demonstrated
+
+* Kernel observability
+* Memory safety tradeoffs
+* Performance profiling
+* Linux internals
+
+📂 Structure:
+
+```
+agent/
+ ├── ebpf/
+ │   ├── syscall_trace.bpf.c
+ │   └── net_trace.bpf.c
+ ├── src/
+ │   ├── metrics.cpp
+ │   ├── ebpf_loader.cpp
+ │   └── sender.cpp
+ └── Makefile
 ```
 
 ---
 
-## ⚡ Setup & Run (Local)
+## 2️⃣ **Go – Ingest, Stream & gRPC Core**
 
-### Clone the repository
+### What You Build
 
-```bash
-git clone https://github.com/syedrafinulhuq/Traceo.git
-cd centralized-logging-backend
+A **high-performance central hub** that:
+
+* Accepts data from agents (TCP/UDP)
+* Uses **worker pools**
+* Buffers data in memory
+* Streams data via **gRPC**
+* Pushes live metrics to WebSocket gateway
+* Persists raw data
+
+### gRPC Usage
+
+* Go → Python (analysis)
+* Go → NestJS (aggregated metrics)
+
+### Skills Demonstrated
+
+* gRPC service design
+* Concurrency patterns
+* Backpressure handling
+* Binary protocols
+
+📂 Structure:
+
 ```
-
-### Copy environment variables
-
-```bash
-cp .env.example .env
-```
-
-### Start all services using Docker Compose
-
-```bash
-docker-compose up --build
-```
-
-### Access services
-
-* API Gateway Swagger: `http://localhost:3000/api/docs`
-* Query API Swagger: `http://localhost:4000/api/docs`
-
----
-
-## 📄 Example Log Payload
-
-```json
-{
-  "service": "order-service",
-  "level": "ERROR",
-  "message": "Payment failed",
-  "userId": "123",
-  "timestamp": "2026-02-18T12:00:00Z",
-  "metadata": {
-    "orderId": "ORD-98765",
-    "retryCount": 1
-  }
-}
+ingest-service/
+ ├── proto/
+ │   └── metrics.proto
+ ├── internal/
+ │   ├── receiver/
+ │   ├── dispatcher/
+ │   ├── grpc/
+ │   └── websocket/
+ └── cmd/main.go
 ```
 
 ---
 
-## 📈 What This Project Has
+## 3️⃣ **Python – Intelligence & Anomaly Engine**
 
-* Event-driven backend design
-* Microservices understanding
-* Asynchronous processing & queues
-* Immutable audit logging
-* Multi-service orchestration with Docker
-* Realistic, production-grade backend thinking
+### What You Build
+
+An **AI-powered analysis service** that:
+
+* Detects anomalies (CPU spikes, memory leaks)
+* Performs trend analysis
+* Labels system behavior
+* Predicts failures (simple ML/statistics)
+* Emits alerts when thresholds are crossed
+
+### Communication
+
+* Receives metrics via **gRPC**
+* Sends alerts to alerting service
+* Exposes REST for NestJS
+
+### Skills Demonstrated
+
+* Streaming analytics
+* Async Python
+* ML pipelines
+* Service-to-service communication
+
+📂 Structure:
+
+```
+analysis-engine/
+ ├── models/
+ ├── anomaly/
+ │   ├── cpu.py
+ │   ├── memory.py
+ ├── grpc_server.py
+ └── alert_emitter.py
+```
 
 ---
 
-## 📎 Resume Line
+## 4️⃣ **NestJS – API Gateway + WebSocket Live Metrics**
 
-> Developed a centralized logging and audit backend using **Node.js, NestJS, Go**, RabbitMQ/Kafka, and PostgreSQL, enabling structured logging, audit trails, and event-driven processing across multiple services.
+### What You Build
+
+A **production-grade control plane**:
+
+### REST APIs
+
+* Auth (JWT)
+* Agent management
+* Historical metrics
+* Alerts & incidents
+
+### WebSocket
+
+* Live CPU / memory graphs
+* Real-time anomaly feed
+* Streaming updates pushed from Go
+
+### Skills Demonstrated
+
+* Modular backend design
+* Guards & interceptors
+* WebSocket gateways
+* Clean DTO validation
+
+📂 Structure:
+
+```
+api-gateway/
+ ├── modules/
+ │   ├── auth/
+ │   ├── metrics/
+ │   ├── alerts/
+ │   └── websocket/
+ └── main.ts
+```
 
 ---
-# Traceo
+
+## 5️⃣ **Alerting System – Email & Webhook**
+
+### What You Build
+
+A **centralized alert dispatcher** that:
+
+* Receives alerts from Python engine
+* Supports:
+
+  * Email (SMTP)
+  * Webhooks (Slack / Discord / custom)
+* Handles alert severity & deduplication
+
+### Skills Demonstrated
+
+* Event-driven design
+* Notification systems
+* Reliability patterns
+
+---
+
+## 6️⃣ **Kubernetes Deployment (Cloud-Native)**
+
+### What You Build
+
+A **fully containerized platform**:
+
+* Dockerized services
+* Kubernetes manifests
+* ConfigMaps & Secrets
+* Health checks
+* Horizontal scaling
+
+📂 Structure:
+
+```
+k8s/
+ ├── ingest-deployment.yaml
+ ├── analysis-deployment.yaml
+ ├── api-gateway.yaml
+ ├── alerting.yaml
+ └── services.yaml
+```
+
+### Skills Demonstrated
+
+* Kubernetes fundamentals
+* Service discovery
+* Production deployment mindset
+
+---
+
+## 🧪 What This Project Proves (Clearly)
+
+✔ Systems programming (C/C++ + eBPF)
+✔ High-performance backend (Go)
+✔ Distributed ML services (Python)
+✔ Enterprise backend APIs (NestJS)
+✔ Real-time systems (WebSocket + gRPC)
+✔ Cloud-native deployment (Kubernetes)
+
+---
+
+## 📄 Resume-Ready Description
+
+**Traceo – Distributed Monitoring & Intelligence Platform**
+
+> Built a cloud-native observability platform using **C/C++, Go, Python, and NestJS**, featuring kernel-level telemetry via **eBPF**, high-throughput ingestion with **gRPC**, real-time dashboards via **WebSocket**, ML-based anomaly detection, automated alerting, and full **Kubernetes deployment**.
+
+---
+
+## ⚠️ Verification Note
+
+[Inference] Architectural patterns, performance claims, and scalability characteristics are based on **industry-observed system designs** and **established engineering practices**, not measured benchmarks.
+
+---
